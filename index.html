@@ -96,7 +96,6 @@
 
         // --- إنشاء الطريق ---
         function createRoad() {
-            // الأرضية
             const groundGeo = new THREE.PlaneGeometry(200, 200);
             const groundMat = new THREE.MeshStandardMaterial({ color: 0x2d5a27, roughness: 0.9 });
             const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -105,7 +104,6 @@
             ground.receiveShadow = true;
             scene.add(ground);
 
-            // الطريق
             const roadMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
             const road = new THREE.Mesh(new THREE.PlaneGeometry(6, 200), roadMat);
             road.rotation.x = -Math.PI / 2;
@@ -113,7 +111,6 @@
             road.receiveShadow = true;
             scene.add(road);
 
-            // خطوط الطريق
             const lineMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
             for (let z = -95; z <= 95; z += 4) {
                 const line = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 1.8), lineMat);
@@ -125,9 +122,7 @@
         createRoad();
 
         // --- 🚗 تحميل مجسمك من MagicaVoxel ---
-        // ✅ المسار الصحيح لـ Vercel
-        const CAR_MODEL_URL = '/vrwrfe-2.obj';
-        const FILE_FORMAT = 'obj';
+        const CAR_MODEL_URL = 'vrwrfe-2.obj';
 
         function loadMyCar() {
             return new Promise((resolve, reject) => {
@@ -138,10 +133,8 @@
                     (data) => {
                         const model = data;
                         
-                        // تعديل حجم المجسم
                         model.scale.set(1.5, 1.5, 1.5);
                         
-                        // تطبيق الظلال
                         model.traverse((child) => {
                             if (child.isMesh) {
                                 child.castShadow = true;
@@ -163,10 +156,8 @@
         // --- إنشاء 100 سيارة ---
         async function createCars() {
             try {
-                // تحميل مجسم السيارة
                 const carTemplate = await loadMyCar();
                 
-                // إزالة رسالة التحميل
                 document.getElementById('loading').style.display = 'none';
 
                 const carCount = 100;
@@ -183,7 +174,6 @@
                     scene.add(car);
                 }
 
-                // إضافة سيارات جانبية
                 for (let i = 0; i < 20; i++) {
                     const car = carTemplate.clone();
                     const z = -90 + i * 10;
@@ -198,20 +188,18 @@
                 console.error('❌ خطأ في تحميل السيارة:', error);
                 document.getElementById('loading').textContent = '❌ فشل التحميل! تأكد من وجود الملف';
                 document.getElementById('loading').style.color = '#ff6666';
+                document.getElementById('loading').style.display = 'block';
             }
         }
 
-        // تشغيل إنشاء السيارات
         createCars();
 
-        // --- تجاوب مع تغيير الحجم ---
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- حلقة التصيير ---
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
